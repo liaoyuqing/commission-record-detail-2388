@@ -1,5 +1,5 @@
 import { Tag, Timeline } from 'tdesign-react';
-import type { CalcStep, CommissionRecord } from '../types';
+import type { CalcStep, CommissionRecord, FirstDiff } from '../types';
 import SectionCard from './SectionCard';
 
 function dotColor(step: CalcStep): string {
@@ -9,7 +9,7 @@ function dotColor(step: CalcStep): string {
   return 'primary';
 }
 
-function StepBody({ step, isDiff }: { step: CalcStep; isDiff: boolean }) {
+function StepBody({ step, isDiff, diff }: { step: CalcStep; isDiff: boolean; diff?: FirstDiff }) {
   const base =
     step.highlight === 'rounding'
       ? 'calc-step calc-step--rounding'
@@ -55,16 +55,31 @@ function StepBody({ step, isDiff }: { step: CalcStep; isDiff: boolean }) {
         </div>
       </dl>
       {step.note && <p className="calc-step__note">{step.note}</p>}
+      {isDiff && diff && (
+        <table className="calc-step__diff-table" data-testid="step-diff-detail">
+          <tbody>
+            <tr>
+              <th>落库值</th>
+              <td>{diff.recorded}</td>
+            </tr>
+            <tr>
+              <th>重放值</th>
+              <td className="calc-step__diff-value">{diff.replayed}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
 
 interface StepSectionProps {
   record: CommissionRecord;
-  diffStepNo?: number;
+  firstDiff?: FirstDiff;
 }
 
-export default function StepSection({ record, diffStepNo }: StepSectionProps) {
+export default function StepSection({ record, firstDiff }: StepSectionProps) {
+  const diffStepNo = firstDiff?.no;
   const highlighted = record.steps.filter(
     (step) => step.highlight === 'rounding' || step.highlight === 'tail',
   );
@@ -81,7 +96,7 @@ export default function StepSection({ record, diffStepNo }: StepSectionProps) {
       <Timeline mode="same" labelAlign="left" className="calc-timeline">
         {record.steps.map((step) => (
           <Timeline.Item key={step.no} dotColor={step.no === diffStepNo ? 'error' : dotColor(step)}>
-            <StepBody step={step} isDiff={step.no === diffStepNo} />
+            <StepBody step={step} isDiff={step.no === diffStepNo} diff={firstDiff} />
           </Timeline.Item>
         ))}
       </Timeline>

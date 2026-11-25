@@ -157,7 +157,7 @@ export default function CommissionRecordDetail() {
         <RuleSection record={record} />
         <StepSection
           record={record}
-          diffStepNo={replayResult && !replayResult.consistent ? replayResult.firstDiff?.no : undefined}
+          firstDiff={replayResult && !replayResult.consistent ? replayResult.firstDiff : undefined}
         />
         <RelationSection record={record} />
       </div>

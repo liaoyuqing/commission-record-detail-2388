@@ -420,6 +420,35 @@ body {
   margin-left: 8px;
 }
 
+.calc-step__diff-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #fff;
+}
+
+.calc-step__diff-table th {
+  width: 90px;
+  text-align: left;
+  padding: 5px 10px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  border: 1px solid #f0c2c2;
+  background: #fff5f5;
+}
+
+.calc-step__diff-table td {
+  padding: 5px 10px;
+  border: 1px solid #f0c2c2;
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-step__diff-value {
+  color: #d54941;
+  font-weight: 600;
+}
+
 .calc-step__head {
   display: flex;
   align-items: center;
