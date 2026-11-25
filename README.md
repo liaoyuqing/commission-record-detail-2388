@@ -13,7 +13,7 @@
 ## 运行方法
 
 ```bash
-npm install        # 安装依赖，约 212 个包
+npm install        # 安装依赖，约 214 个包
 npm run dev        # 启动开发服务器，默认 http://localhost:5173
 ```
 
@@ -72,7 +72,7 @@ npm run preview    # 预览构建产物
 依赖的上游工单同样以 mock 承接，真实接入时在这两处替换：
 
 - **S2-IAM（身份、角色与数据范围）**：当前业务员身份硬编码在 `src/mock/records.ts` 的 `salesperson` 字段（虚构值「业务员 D-12 / E2026012」）。真实接入应从 S2-IAM 的当前用户上下文取，并按数据范围过滤记录可见性。
-- **S2-WB（工作台前端框架）**：当前以独立的 `BrowserRouter` + 自定义页面骨架（`src/App.tsx`、`src/components/SectionCard.tsx`）承接，未挂到工作台的路由树与菜单里。真实接入时把 `/commission/records/:id` 注册进 S2-WB 的路由表，页面内的导航、面包屑与权限占位改由框架提供。
+- **S2-WB（工作台前端框架）**：当前以独立的 `BrowserRouter` + 自定义页面骨架（`src/App.tsx`、`src/components/SectionCard.tsx`）承接，未挂到工作台的路由树与菜单里。真实接入时把 `/commission/records/:id` 注册进 S2-WB 的路由表，页面内的导航、面包屑与权限校验改由框架提供。
 
 ## 环境变量
 
