@@ -114,14 +114,14 @@ export function buildSteps(record: CommissionRecord): CalcStep[] {
     {
       no: 4,
       title: '主业务员份额（未取整）',
-      formula: '主业务员份额 = 取整总额 × 主业务员占比',
+      formula: '主业务员份额 = 提成总额（未取整） × 主业务员占比',
       inputs: [
-        { label: '取整总额', value: formatMoney(ledger.totalCents) },
+        { label: '提成总额（未取整）', value: `${formatRawCents(Number(ledger.totalRaw))} 分` },
         { label: '主业务员占比', value: `${(record.params.shareBp / 100).toFixed(2)}%` },
       ],
       output: `${formatRawCents(Number(ledger.shareRaw))} 分`,
       highlight: 'none',
-      note: '份额按取整后的总额分摊，保证各角色合计等于总额',
+      note: '份额按未取整的提成总额分摊；两次取整产生的差额在尾差步骤归集到主业务员',
     },
     {
       no: 5,
@@ -137,13 +137,13 @@ export function buildSteps(record: CommissionRecord): CalcStep[] {
     {
       no: 6,
       title: '协同业务员份额取整',
-      formula: '协同份额 = ROUND_HALF_UP(取整总额 × (1 − 主业务员占比), 分)',
+      formula: '协同份额 = ROUND_HALF_UP(提成总额（未取整） × 协同占比, 分)',
       inputs: [
-        { label: '取整总额', value: formatMoney(ledger.totalCents) },
+        { label: '提成总额（未取整）', value: `${formatRawCents(Number(ledger.totalRaw))} 分` },
         { label: '协同占比', value: `${((10000 - record.params.shareBp) / 100).toFixed(2)}%` },
       ],
       output: formatMoney(ledger.otherCents),
-      note: '取整步骤：同一口径分摊',
+      note: '取整步骤：与第 4 步同一口径，先按未取整总额分摊，再把分以下小数四舍五入',
       highlight: 'rounding',
     },
     {

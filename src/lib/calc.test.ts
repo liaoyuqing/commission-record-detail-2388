@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildSteps, computeLedger, divRoundHalfUp, replay } from './calc';
+import { formatRawCents } from './money';
 import { records } from '../mock/records';
 
 describe('divRoundHalfUp', () => {
@@ -108,5 +109,57 @@ describe('replay 重放校验', () => {
     for (const record of records) {
       expect(replay(record).consistent).toBe(true);
     }
+  });
+});
+
+describe('第 ④ 区块口径（返修 1）', () => {
+  it('份额基数用的是未取整总额，不是取整总额', () => {
+    const params = { baseCents: 9642038, rateBps: 845, shareBp: 7000 };
+    const ledger = computeLedger(params);
+    const totalUnits = params.baseCents * params.rateBps;
+    const shareUnits = totalUnits * params.shareBp;
+    // 份额未取整值 = 未取整总额 × 占比，单位 1e-8 分
+    expect(Number(ledger.shareRaw)).toBeCloseTo(shareUnits / 1e8, 6);
+    expect(ledger.shareRaw).toBe('570326.5477');
+    // 若按取整总额分摊则应为 570326.4000，与实际值不同，说明口径确为未取整
+    expect(Number(ledger.shareRaw)).not.toBeCloseTo((ledger.totalCents * params.shareBp) / 10000, 1);
+  });
+
+  it('尾差恒等式：取整总额 = 主份额取整 + 协同份额取整 + 尾差', () => {
+    for (const record of records) {
+      const ledger = computeLedger(record.params);
+      expect(ledger.tailCents).toBe(ledger.totalCents - ledger.shareCents - ledger.otherCents);
+    }
+  });
+
+  it('第 4 步输入列的是未取整提成总额，与 ledger.totalRaw 一致', () => {
+    const record = records[0];
+    const ledger = computeLedger({ ...record.params, baseCents: record.params.baseCents });
+    const step4 = buildSteps(record)[3];
+    expect(step4.title).toBe('主业务员份额（未取整）');
+    expect(step4.inputs[0].label).toBe('提成总额（未取整）');
+    expect(step4.inputs[0].value).toBe(`${formatRawCents(Number(ledger.totalRaw))} 分`);
+    expect(step4.inputs[0].value).toBe('814,752.2110 分');
+    expect(step4.formula).not.toContain('取整总额');
+  });
+
+  it('第 6 步与第 4 步同一口径，输入同样是用未取整提成总额', () => {
+    const record = records[0];
+    const steps = buildSteps(record);
+    const step6 = steps[5];
+    expect(step6.formula).toBe('协同份额 = ROUND_HALF_UP(提成总额（未取整） × 协同占比, 分)');
+    expect(step6.inputs[0].label).toBe('提成总额（未取整）');
+    expect(step6.inputs[0].value).toBe(steps[3].inputs[0].value);
+  });
+
+  it('时间轴读下来口径连贯：未取整总额 → 取整总额 → 未取整份额 → 取整 → 尾差 → 应计', () => {
+    const steps = buildSteps(records[0]);
+    expect(steps[1].output).toBe('814,752.2110 分');
+    expect(steps[2].output).toBe('¥8,147.52');
+    expect(steps[3].output).toBe('570,326.5477 分');
+    expect(steps[4].output).toBe('¥5,703.27');
+    expect(steps[5].output).toBe('¥2,444.26');
+    expect(steps[6].output).toBe('-¥0.01');
+    expect(steps[7].output).toBe('¥5,703.26');
   });
 });
