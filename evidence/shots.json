@@ -1,0 +1,50 @@
+﻿[
+    {
+        "name":  "01-accrual-record.png",
+        "bytes":  802563
+    },
+    {
+        "name":  "02-clawback-record.png",
+        "bytes":  850516
+    },
+    {
+        "name":  "03-adjustment-record.png",
+        "bytes":  1003979
+    },
+    {
+        "name":  "04-rounding-tail-highlight.png",
+        "bytes":  479429
+    },
+    {
+        "name":  "05b-replay-consistent-alert.png",
+        "bytes":  81682
+    },
+    {
+        "name":  "05-replay-consistent.png",
+        "bytes":  840575
+    },
+    {
+        "name":  "06b-replay-diff-step.png",
+        "bytes":  122884
+    },
+    {
+        "name":  "06-replay-diff.png",
+        "bytes":  929633
+    },
+    {
+        "name":  "07-replay-consistent.gif",
+        "bytes":  1638439
+    },
+    {
+        "name":  "08-replay-diff.gif",
+        "bytes":  1755446
+    },
+    {
+        "name":  "09b-step4-formula.png",
+        "bytes":  66828
+    },
+    {
+        "name":  "09-step-section-fixed.png",
+        "bytes":  480434
+    }
+]
